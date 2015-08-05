@@ -1,7 +1,7 @@
 'use strict';
 
 var React = require('react-native');
-var { AppRegistry, ListView, StyleSheet, Text, View } = React;
+var { AppRegistry, ListView, StyleSheet, Text, TouchableWithoutFeedback, View } = React;
 
 var models = [{title:"A"}, {title:"B"}, {title:"C"}, {title:"D"}, {title:"E"}]
 
@@ -18,10 +18,16 @@ var ReactBug = React.createClass({
 
   renderRow(rowData, sectionID, rowID) {
     return (
-      <View style={styles.card}>
-        <Text>{rowData.title}</Text>
-      </View>
+      <TouchableWithoutFeedback onPress={this.userClickedDealCard}>
+        <View style={styles.card}>
+          <Text style={styles.text}>{rowData.title}</Text>
+        </View>
+      </TouchableWithoutFeedback>
     );
+  },
+
+  userClickedDealCard() {
+    console.log('userClickedDealCard');
   },
 
   getDataSource() {
@@ -33,9 +39,14 @@ var ReactBug = React.createClass({
 });
 
 var styles = StyleSheet.create({
+  text: {
+    textAlign: 'center',
+    fontSize: 40,
+    color: 'white',
+  },
   card: {
     backgroundColor: 'green',
-    textAlign: 'center',
+    justifyContent: 'center',
     width: 320,
     height: 340,
     margin: 10,
