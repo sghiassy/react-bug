@@ -7,6 +7,12 @@ var models = [{title:"A"}, {title:"B"}, {title:"C"}, {title:"D"}, {title:"E"}]
 
 var ReactBug = React.createClass({
   render: function() {
+    return <ListOfCards />
+  }
+});
+
+var ListOfCards = React.createClass({
+  render: function() {
     return (
       <ListView
         contentContainerStyle={styles.list}
