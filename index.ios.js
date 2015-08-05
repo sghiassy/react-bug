@@ -9,44 +9,71 @@ var ReactBug = React.createClass({
   render: function() {
     return (
       <Navigator
-      initialRoute={{name: 'My First Scene', index: 0}}
-      renderScene={(route, navigator) =>
-      <ListOfCards
-        name={route.name}
-        onForward={(data) => {
-          var nextIndex = route.index + 1;
-          navigator.push({
-            name: 'Scene ' + nextIndex,
-            index: nextIndex,
-            data: data,
-          });
-        }}
-        onBack={() => {
-          if (route.index > 0) {
-            navigator.pop();
-          }
-        }}
-      />
-    }
-  />
+        initialRoute={{name: 'My First Scene', index: 0}}
+        renderScene={this.renderScene}/>
     );
+  },
+
+  renderScene: function(route, navigator) {
+    // saving a reference to the navigator
+    // note: this is probably the wrong approach, but it works for this test app's purpose
+    // note2: this doesn't cause the bug
+    this.navigator = navigator;
+
+    if (route.index == 0) {
+      return (
+        <ListOfCards
+          name={route.name}
+          onPush={this.onPush}
+          onPop={this.onPop} />
+      );
+    } else {
+      return (
+        <DetailPage
+          name={route.name}
+          onPush={this.onPush}
+          onPop={this.onPop}
+          model={route.model} />
+      );
+    }
+  },
+
+  onPush: function(route) {
+    this.navigator.push({
+      model: route.model,
+    });
+  },
+
+  onPop: function() {
+    if (route.index > 0) {
+      this.navigator.pop();
+    }
   }
 });
 
 var ListOfCards = React.createClass({
   render: function() {
+
+    /**
+     * To see the app work, without the infinite loop
+     * uncomment the 3 lines below
+     */
+
+    // return (
+    //   <Card model={models[0]} onPush={this.props.onPush} />
+    // );
+
     return (
       <ListView
         contentContainerStyle={styles.list}
         dataSource={this.getDataSource()}
-        renderRow={this.renderRow}
-        onEndReachedThreshold={0} />
+        renderRow={this.renderRow} />
     );
   },
 
   renderRow(rowData, sectionID, rowID) {
     return (
-        <Card model={rowData} onForward={this.props.onForward} />
+        <Card model={rowData} onPush={this.props.onPush} />
     );
   },
 
@@ -69,18 +96,16 @@ var Card = React.createClass({
     );
   },
 
-  userClickedDealCard(model) {
-    console.log('userClickedDealCard');
-    // debugger
-    this.props.onForward(model);
+  userClickedDealCard(evt) {
+    this.props.onPush({model: this.props.model});
   },
 });
 
 var DetailPage = React.createClass({
   render: function() {
     return (
-      <View style={{flex:1}}>
-        <Text>{this.props.model.title}</Text>
+      <View style={{flex:1, justifyContent: 'center'}}>
+        <Text style={{textAlign: 'center', fontSize: 30}}>I am the {this.props.model.title} page</Text>
       </View>
     );
   }
