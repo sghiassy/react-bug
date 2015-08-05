@@ -1,13 +1,35 @@
 'use strict';
 
 var React = require('react-native');
-var { AppRegistry, ListView, StyleSheet, Text, TouchableWithoutFeedback, View } = React;
+var { AppRegistry, ListView, Navigator, StyleSheet, Text, TouchableWithoutFeedback, View } = React;
 
 var models = [{title:"A"}, {title:"B"}, {title:"C"}, {title:"D"}, {title:"E"}]
 
 var ReactBug = React.createClass({
   render: function() {
-    return <ListOfCards />
+    return (
+      <Navigator
+      initialRoute={{name: 'My First Scene', index: 0}}
+      renderScene={(route, navigator) =>
+      <ListOfCards
+        name={route.name}
+        onForward={(data) => {
+          var nextIndex = route.index + 1;
+          navigator.push({
+            name: 'Scene ' + nextIndex,
+            index: nextIndex,
+            data: data,
+          });
+        }}
+        onBack={() => {
+          if (route.index > 0) {
+            navigator.pop();
+          }
+        }}
+      />
+    }
+  />
+    );
   }
 });
 
@@ -24,16 +46,8 @@ var ListOfCards = React.createClass({
 
   renderRow(rowData, sectionID, rowID) {
     return (
-      <TouchableWithoutFeedback onPress={this.userClickedDealCard}>
-        <View style={styles.card}>
-          <Text style={styles.text}>{rowData.title}</Text>
-        </View>
-      </TouchableWithoutFeedback>
+        <Card model={rowData} onForward={this.props.onForward} />
     );
-  },
-
-  userClickedDealCard() {
-    console.log('userClickedDealCard');
   },
 
   getDataSource() {
@@ -42,6 +56,34 @@ var ListOfCards = React.createClass({
 
     return dataSource.cloneWithRows(models);
   },
+});
+
+var Card = React.createClass({
+  render: function() {
+    return (
+      <TouchableWithoutFeedback onPress={this.userClickedDealCard}>
+        <View style={styles.card}>
+          <Text style={styles.text}>{this.props.model.title}</Text>
+        </View>
+      </TouchableWithoutFeedback>
+    );
+  },
+
+  userClickedDealCard(model) {
+    console.log('userClickedDealCard');
+    // debugger
+    this.props.onForward(model);
+  },
+});
+
+var DetailPage = React.createClass({
+  render: function() {
+    return (
+      <View style={{flex:1}}>
+        <Text>{this.props.model.title}</Text>
+      </View>
+    );
+  }
 });
 
 var styles = StyleSheet.create({
