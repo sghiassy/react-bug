@@ -15,40 +15,20 @@ var ReactBug = React.createClass({
   },
 
   renderScene: function(route, navigator) {
-    // saving a reference to the navigator
-    // note: this is probably the wrong approach, but it works for this test app's purpose
-    // note2: this doesn't cause the bug
-    this.navigator = navigator;
-
     if (route.index == 0) {
       return (
         <ListOfCards
           name={route.name}
-          onPush={this.onPush}
-          onPop={this.onPop} />
+          navigator={navigator} />
       );
     } else {
       return (
         <DetailPage
           name={route.name}
-          onPush={this.onPush}
-          onPop={this.onPop}
           model={route.model} />
       );
     }
   },
-
-  onPush: function(route) {
-    this.navigator.push({
-      model: route.model,
-    });
-  },
-
-  onPop: function() {
-    if (route.index > 0) {
-      this.navigator.pop();
-    }
-  }
 });
 
 var ListOfCards = React.createClass({
@@ -60,7 +40,7 @@ var ListOfCards = React.createClass({
      */
 
     // return (
-    //   <Card model={models[0]} onPush={this.props.onPush} />
+    //   <Card model={models[0]} navigator={this.props.navigator} />
     // );
 
     return (
@@ -73,7 +53,7 @@ var ListOfCards = React.createClass({
 
   renderRow(rowData, sectionID, rowID) {
     return (
-        <Card model={rowData} onPush={this.props.onPush} />
+        <Card model={rowData} navigator={this.props.navigator} />
     );
   },
 
@@ -97,7 +77,7 @@ var Card = React.createClass({
   },
 
   userClickedDealCard(evt) {
-    this.props.onPush({model: this.props.model});
+    this.props.navigator.push({model: this.props.model});
   },
 });
 
