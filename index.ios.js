@@ -2,8 +2,10 @@
 
 var React = require('react-native');
 var { AppRegistry, ListView, Navigator, StyleSheet, Text, TouchableWithoutFeedback, View } = React;
+var SGListView = require('react-native-sglistview');
 
-var models = [{title:"A"}, {title:"B"}, {title:"C"}, {title:"D"}, {title:"E"}]
+var models = [{title:"A"}, {title:"B"}, {title:"C"}, {title:"D"}, {title:"E"},
+              {title:"F"}, {title:"G"}, {title:"H"}, {title:"I"}, {title:"J"}];
 
 var ReactBug = React.createClass({
   render: function() {
@@ -44,20 +46,22 @@ var ListOfCards = React.createClass({
     // );
 
     return (
-      <ListView
+      <SGListView
         contentContainerStyle={styles.list}
         dataSource={this.getDataSource()}
         renderRow={this.renderRow} />
     );
   },
 
-  renderRow(rowData, sectionID, rowID) {
+
+
+  renderRow: function(rowData, sectionID, rowID) {
     return (
         <Card model={rowData} navigator={this.props.navigator} />
     );
   },
 
-  getDataSource() {
+  getDataSource: function() {
     var dataSource = new ListView.DataSource(
       {rowHasChanged: (r1, r2) => r1.title !== r2.title});
 
@@ -76,7 +80,7 @@ var Card = React.createClass({
     );
   },
 
-  userClickedDealCard(evt) {
+  userClickedDealCard: function(evt) {
     this.props.navigator.push({model: this.props.model});
   },
 });
